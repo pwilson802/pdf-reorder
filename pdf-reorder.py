@@ -44,17 +44,24 @@ for x in pdf_objects:
 print(f'Please indicate what order the new pdf should be in:')
 print('example: 1:1, 2:1, 1:1, 2:2, 1:1, 3:3')
 input_test = re.compile(r'[\d:\d, ]+')
+valid_pages = []
+for i in range(len(pdf_objects)):
+    valid_pages += [pdf_objects[i]['index'] + ':' + str(x) for x in range(1,pdf_objects[i]['pages']+1)]
 
 # Adding all the below to try/except loop to catch if an incorrect page number has been added
 while True:
     try:
         while True:
             page_layout = input('Enter the Pages: ')
+            for page in page_layout.split(','):
+                if page not in valid_pages:
+                    print('The Page {} is not a valid page number in your pdf files'.format(page))
+                    continue
+            break
             if not re.match(input_test, page_layout).group() == page_layout:
                 print('Please enter the pages as valid input')
                 print('example: 1:1, 2:1, 1:1, 2:2, 1:1')
             else:
-                print('Good, the new pdf will now be created.')
                 break
 
         pdf_writer = PyPDF2.PdfFileWriter()
