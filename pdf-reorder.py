@@ -50,34 +50,26 @@ for i in range(len(pdf_objects)):
 
 # Adding all the below to try/except loop to catch if an incorrect page number has been added
 while True:
-    try:
-        while True:
-            page_layout = input('Enter the Pages: ')
-            for page in page_layout.split(','):
-                if page not in valid_pages:
-                    print('The Page {} is not a valid page number in your pdf files'.format(page))
-                    continue
-            break
-            if not re.match(input_test, page_layout).group() == page_layout:
-                print('Please enter the pages as valid input')
-                print('example: 1:1, 2:1, 1:1, 2:2, 1:1')
-            else:
-                break
-
-        pdf_writer = PyPDF2.PdfFileWriter()
-        output = open('c:\\temp\\pdf\\out.pdf', 'wb')
-
-        for page_index in page_layout.split(','):
-            pdf, page = page_index.split(':')
-            pdf_path = [x for x in pdf_objects if x['index'] == pdf][0]['fullpath']
-            print(pdf_path)
-            print(page)
-            pdf_reader = PyPDF2.PdfFileReader(pdf_path)
-            pdf_writer.addPage(pdf_reader.getPage(int(page)-1))
+    pages_valid = True
+    page_layout = input('Enter the Pages: ')
+    for page in page_layout.split(','):
+        if page not in valid_pages:
+            pages_valid = False
+    if pages_valid == False:
+        print('The Page {} is not a valid page number in your pdf files'.format(page))
+        continue
+    else:
+        print('You have entered valid page numbers, processing...')
         break
-    except IndexError as e: 
-        print(e)
-        print('An incorrect page number has been entered.  Please try again.')
+
+pdf_writer = PyPDF2.PdfFileWriter()
+output = open('c:\\temp\\pdf\\out.pdf', 'wb')
+
+for page_index in page_layout.split(','):
+    pdf, page = page_index.split(':')
+    pdf_path = [x for x in pdf_objects if x['index'] == pdf][0]['fullpath']
+    pdf_reader = PyPDF2.PdfFileReader(pdf_path)
+    pdf_writer.addPage(pdf_reader.getPage(int(page)-1))
 
 
 pdf_writer.write(output)
